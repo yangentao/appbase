@@ -57,6 +57,9 @@ object App {
     val hasInst: Boolean get() = _inst != null
 
     fun init(inst: Application) {
+        if (_inst != null) {
+            return
+        }
         this._inst = inst
         Yog.init(inst)
         Thread.setDefaultUncaughtExceptionHandler { _, ex ->
