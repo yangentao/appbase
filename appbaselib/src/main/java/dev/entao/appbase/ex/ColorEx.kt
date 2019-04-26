@@ -29,7 +29,7 @@ val Long.rgb: Int
 
 val Int.color: Int
     get() {
-        return this
+        return this.toLong().color
     }
 
 fun grayColor(n: Int): Int {
