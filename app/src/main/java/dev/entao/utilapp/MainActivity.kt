@@ -2,7 +2,7 @@ package dev.entao.utilapp
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import dev.entao.appbase.App
+import dev.entao.kan.appbase.App
 
 class MainActivity : AppCompatActivity() {
 
