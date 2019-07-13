@@ -19,14 +19,13 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.os.PowerManager
-import android.support.annotation.DrawableRes
 import android.telephony.TelephonyManager
 import android.text.ClipboardManager
-import android.text.TextUtils
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import androidx.annotation.DrawableRes
 import dev.entao.kan.appbase.ex.color
 import dev.entao.kan.http.Http
 import dev.entao.kan.log.Yog
@@ -86,7 +85,7 @@ object App {
     val metaData: Bundle
         get() {
             val ai = context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
-            return ai?.metaData ?: Bundle()
+            return ai.metaData
         }
 
 
@@ -149,7 +148,7 @@ object App {
         }
 
     val notificationManager: NotificationManager
-        get () {
+        get() {
             return inst.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         }
 
@@ -162,7 +161,8 @@ object App {
 
     val sdAppRoot: File
         get() {
-            return inst.getExternalFilesDir(null)
+            //TODO Maybe null
+            return inst.getExternalFilesDir(null)!!
         }
 
     fun px2dp(px: Int): Int {
@@ -192,44 +192,16 @@ object App {
         }
     }
 
-    fun isForeground(): Boolean {
-        val am: ActivityManager = inst.getSystemService(Context.ACTIVITY_SERVICE) as? ActivityManager
-            ?: return false
-        val cn = am.getRunningTasks(1)[0].topActivity
-        val currentPackageName = cn.packageName
-        return !TextUtils.isEmpty(currentPackageName) && currentPackageName == packageName
-    }
-
-    fun isAppShowing(): Boolean {
-        return isForeground() && !keyguardManager.inKeyguardRestrictedInputMode()
-    }
-
-    fun isAppTop(): Boolean {
-        if (keyguardManager.inKeyguardRestrictedInputMode()) {
-            return false
-        }
-        val am: ActivityManager = inst.getSystemService(Context.ACTIVITY_SERVICE) as? ActivityManager
-            ?: return false
-        for (info in am.runningAppProcesses) {
-
-            if (info.processName == packageName) {
-                Log.d("app", info.processName + " " + info.importance)
-                return info.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND
-            }
-        }
-        return false
-    }
-
 
     @Throws(FileNotFoundException::class)
-    fun openStream(uri: Uri): InputStream = contentResolver.openInputStream(uri)
+    fun openStream(uri: Uri): InputStream? = contentResolver.openInputStream(uri)
 
 
     // 获取ApiKey
     fun getMetaValue(context: Context, metaKey: String): String? {
         try {
             val ai = context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
-            return ai?.metaData?.getString(metaKey)
+            return ai.metaData.getString(metaKey)
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
         }
@@ -429,8 +401,8 @@ object App {
 
 
         object ex {
-            val filesDir: File = App.inst.getExternalFilesDir(null)
-            val cacheDir: File = App.inst.externalCacheDir
+            val filesDir: File = App.inst.getExternalFilesDir(null)!!
+            val cacheDir: File = App.inst.externalCacheDir!!
 
             fun cacheFile(fileName: String): File {
                 return ensureDir(cacheDir, fileName)

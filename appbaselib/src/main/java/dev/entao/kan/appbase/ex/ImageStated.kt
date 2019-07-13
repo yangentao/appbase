@@ -3,7 +3,7 @@ package dev.entao.kan.appbase.ex
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.StateListDrawable
-import android.support.annotation.DrawableRes
+import androidx.annotation.DrawableRes
 import dev.entao.kan.appbase.App
 
 /**

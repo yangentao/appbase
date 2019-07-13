@@ -51,7 +51,7 @@ object Asset {
             if (path2.endsWith("/")) {
                 path2 = path2.substring(0, path2.length - 1)
             }
-            return manager.list(path2)
+            return manager.list(path2) as Array<String>
         } catch (e: IOException) {
             e.printStackTrace()
         }
@@ -85,7 +85,7 @@ object Asset {
             return bmp
         } catch (e: IOException) {
             e.printStackTrace()
-            Log.e("ASSET",e.localizedMessage)
+            Log.e("ASSET",e.localizedMessage ?: "")
         } finally {
             inStream.closeSafe()
         }
@@ -102,7 +102,7 @@ object Asset {
             return Drawable.createFromResourceStream(App.resource, null, inStream, null, opts)
         } catch (e: Exception) {
             e.printStackTrace()
-            Log.e("ASSET", e.localizedMessage)
+            Log.e("ASSET", e.localizedMessage ?: "")
         } finally {
             inStream.closeSafe()
         }

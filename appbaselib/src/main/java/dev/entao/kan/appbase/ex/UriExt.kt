@@ -9,9 +9,10 @@ fun UriRes(resId: Int): Uri {
     return Uri.parse("android.resource://" + App.packageName + "/" + resId.toString())
 }
 
-fun Uri.openInputStream(): InputStream {
+fun Uri.openInputStream(): InputStream? {
     if (this.scheme == "content") {
         return App.contentResolver.openInputStream(this)
     }
-    return FileInputStream(this.path)
+    val p = this.path ?: return null
+    return FileInputStream(p)
 }
