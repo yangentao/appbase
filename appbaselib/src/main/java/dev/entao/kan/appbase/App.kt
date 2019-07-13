@@ -334,8 +334,12 @@ object App {
 
             val cacheDir: File = App.inst.cacheDir
 
+            fun docFile(filename: String): File {
+                return File(filesDir, filename)
+            }
+
             fun cacheFile(fileName: String): File {
-                return ensureDir(cacheDir, fileName)
+                return File(cacheDir, fileName)
             }
 
             fun dir(dirName: String): File {
