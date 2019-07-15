@@ -47,6 +47,37 @@ private class SafeBlock(val callback: BlockUnit) : Runnable {
     }
 }
 
+private class GroupTask(val groupName: String, private var block: BlockUnit?) : Runnable {
+
+    init {
+        allGroupTask.add(this)
+    }
+
+    override fun run() {
+        allGroupTask.remove(this)
+        try {
+            this.block?.invoke()
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+    }
+
+    companion object {
+        private val allGroupTask = ArrayList<GroupTask>()
+
+        fun cancelGroup(name: String) {
+            for (item in allGroupTask) {
+                if (item.groupName == name) {
+                    item.block = null
+                }
+            }
+            allGroupTask.removeAll { it.block == null }
+        }
+    }
+
+}
+
+
 object Task {
     val mainHandler = Handler(Looper.getMainLooper())
     private val es: ScheduledExecutorService = Executors.newScheduledThreadPool(1) { r ->
@@ -55,6 +86,11 @@ object Task {
         t.priority = Thread.NORM_PRIORITY - 1
         t.setUncaughtExceptionHandler(::uncaughtException)
         t
+    }
+
+    fun merge(groupName: String, millSec: Long = 300, block: BlockUnit) {
+        GroupTask.cancelGroup(groupName)
+        Task.mainHandler.postDelayed(GroupTask(groupName, block), millSec)
     }
 
     fun mainThread(block: BlockUnit) {

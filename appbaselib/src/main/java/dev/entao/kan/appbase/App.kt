@@ -20,7 +20,6 @@ import android.os.Bundle
 import android.os.Environment
 import android.os.PowerManager
 import android.telephony.TelephonyManager
-import android.text.ClipboardManager
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
@@ -230,24 +229,11 @@ object App {
     }
 
 
-    @Suppress("DEPRECATION")
-    val clipText: String
-        get() {
-            val cm = inst.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            return cm.text.toString()
-        }
-
-
     fun showInputMethod(view: View) {
         val imm = inst.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(view, InputMethodManager.SHOW_FORCED)
     }
 
-    @Suppress("DEPRECATION")
-    fun copyToClipboard(text: String) {
-        val clip = inst.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        clip.text = text
-    }
 
     fun installShortcut(name: String, imageRes: Int, cls: Class<*>, exKey: String, exValue: String) {
         val it = Intent(Intent.ACTION_MAIN)

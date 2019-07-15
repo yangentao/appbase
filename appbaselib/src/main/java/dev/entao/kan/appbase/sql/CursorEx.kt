@@ -6,6 +6,23 @@ import android.database.Cursor
 import dev.entao.kan.json.*
 
 
+inline fun Cursor.eachRow(block: (Cursor) -> Unit) {
+    this.use {
+        while (it.moveToNext()) {
+            block(it)
+        }
+    }
+}
+
+inline fun Cursor.firstRow(block: (Cursor) -> Unit) {
+    this.use {
+        if (it.moveToNext()) {
+            block(it)
+        }
+    }
+}
+
+
 //带下划线表示关闭Cursor
 val Cursor.listRow_: List<RowData>
     get() {
