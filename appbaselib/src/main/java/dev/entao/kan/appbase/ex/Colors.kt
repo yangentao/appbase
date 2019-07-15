@@ -43,8 +43,8 @@ object Colors {
     var Unselected = 0xFFAAAAAA.color
 
     var TextColorMajor = 0xFF333333.color
-    var TextColorMid = 0xFF555555.color
-    var TextColorMinor = 0xFF777777.color
+    var TextColorMid = 0xFF666666.color
+    var TextColorMinor = 0xFF888888.color
     var TextColor = TextColorMajor
     var TextColorUnselected = 0xFF999999.color
 
