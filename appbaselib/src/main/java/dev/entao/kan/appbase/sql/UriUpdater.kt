@@ -9,6 +9,13 @@ import dev.entao.kan.appbase.App
 object UriUpdater {
     const val _ID = "_id"
 
+    fun insert(uri: Uri, block: (ContentValues) -> Unit): Uri? {
+        val v = ContentValues()
+        block(v)
+        return this.insert(uri, v)
+    }
+
+
     fun insert(uri: Uri, values: ContentValues): Uri? {
         return App.contentResolver.insert(uri, values)
     }
@@ -42,6 +49,12 @@ object UriUpdater {
 
     fun update(uri: Uri, values: ContentValues): Int {
         return update(uri, values, null)
+    }
+
+    fun update(uri: Uri, w: Where?, block: (ContentValues) -> Unit): Int {
+        val v = ContentValues()
+        block(v)
+        return this.update(uri, v, w)
     }
 
     fun update(uri: Uri, values: ContentValues, w: Where?): Int {
