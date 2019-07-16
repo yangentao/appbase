@@ -77,6 +77,36 @@ private class GroupTask(val groupName: String, private var block: BlockUnit?) : 
 
 }
 
+private class GroupTaskX(val groupName: String, private var block: BlockUnit?) : Runnable {
+
+    init {
+        allGroupTask.add(this)
+    }
+
+    override fun run() {
+        val a = this.block
+        cancelGroup(this.groupName)
+        try {
+            a?.invoke()
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+    }
+
+    companion object {
+        private val allGroupTask = ArrayList<GroupTaskX>()
+
+        private fun cancelGroup(name: String) {
+            for (item in allGroupTask) {
+                if (item.groupName == name) {
+                    item.block = null
+                }
+            }
+            allGroupTask.removeAll { it.block == null }
+        }
+    }
+
+}
 
 object Task {
     val mainHandler = Handler(Looper.getMainLooper())
@@ -88,6 +118,12 @@ object Task {
         t
     }
 
+    //第一次执行block的时候, 取消所有同组任务, 至少millsec会执行一次
+    fun mergeX(groupName: String, millSec: Long = 300, block: BlockUnit) {
+        Task.mainHandler.postDelayed(GroupTaskX(groupName, block), millSec)
+    }
+
+    //后面的merge调用会取消前面所有的同组任务, 连续不超过millSec的同组任务, 只有最后一个被执行
     fun merge(groupName: String, millSec: Long = 300, block: BlockUnit) {
         GroupTask.cancelGroup(groupName)
         Task.mainHandler.postDelayed(GroupTask(groupName, block), millSec)
