@@ -12,7 +12,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 29
         versionCode 1
-        versionName "4.0.5"
+        versionName "4.0.6"
     }
 
 }
@@ -24,9 +24,9 @@ dependencies {
     implementation 'androidx.core:core:1.0.2'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    implementation 'dev.entao.kan:base:4.0.1'
+    implementation 'dev.entao.kan:base:4.0.2'
     implementation 'dev.entao.kan:log:4.0.0'
-    implementation 'dev.entao.kan:json:4.0.0'
+    implementation 'dev.entao.kan:json:4.0.1'
     implementation 'dev.entao.kan:http:4.0.0'
 }
 
