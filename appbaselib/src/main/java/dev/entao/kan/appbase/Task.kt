@@ -50,11 +50,15 @@ private class SafeBlock(val callback: BlockUnit) : Runnable {
 private class GroupTask(val groupName: String, private var block: BlockUnit?) : Runnable {
 
     init {
-        allGroupTask.add(this)
+        synchronized(allGroupTask) {
+            allGroupTask.add(this)
+        }
     }
 
     override fun run() {
-        allGroupTask.remove(this)
+        synchronized(allGroupTask) {
+            allGroupTask.remove(this)
+        }
         try {
             this.block?.invoke()
         } catch (ex: Exception) {
@@ -66,12 +70,14 @@ private class GroupTask(val groupName: String, private var block: BlockUnit?) : 
         private val allGroupTask = ArrayList<GroupTask>()
 
         fun cancelGroup(name: String) {
-            for (item in allGroupTask) {
-                if (item.groupName == name) {
-                    item.block = null
+            synchronized(allGroupTask) {
+                for (item in allGroupTask) {
+                    if (item.groupName == name) {
+                        item.block = null
+                    }
                 }
+                allGroupTask.removeAll { it.block == null }
             }
-            allGroupTask.removeAll { it.block == null }
         }
     }
 
@@ -80,14 +86,20 @@ private class GroupTask(val groupName: String, private var block: BlockUnit?) : 
 private class GroupTaskX(val groupName: String, private var block: BlockUnit?) : Runnable {
 
     init {
-        allGroupTask.add(this)
+        synchronized(allGroupTask) {
+            allGroupTask.add(this)
+        }
     }
 
     override fun run() {
-        val a = this.block
+        synchronized(allGroupTask) {
+            allGroupTask.remove(this)
+        }
+        val a = this.block ?: return
+        this.block = null
         cancelGroup(this.groupName)
         try {
-            a?.invoke()
+            a.invoke()
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
@@ -97,12 +109,14 @@ private class GroupTaskX(val groupName: String, private var block: BlockUnit?) :
         private val allGroupTask = ArrayList<GroupTaskX>()
 
         private fun cancelGroup(name: String) {
-            for (item in allGroupTask) {
-                if (item.groupName == name) {
+            synchronized(allGroupTask) {
+                val ls = allGroupTask.filter { it.groupName == name }.toMutableList()
+                while (ls.size > 1) {
+                    val item = ls.removeAt(0)
                     item.block = null
                 }
+                allGroupTask.removeAll { it.block == null }
             }
-            allGroupTask.removeAll { it.block == null }
         }
     }
 
