@@ -4,10 +4,7 @@ package dev.entao.kan.appbase.sql
 
 import android.util.Log
 import dev.entao.kan.appbase.App
-import dev.entao.kan.base.defaultValue
-import dev.entao.kan.base.defaultValueOfProperty
-import dev.entao.kan.base.nameProp
-import dev.entao.kan.base.strToV
+import dev.entao.kan.base.*
 import dev.entao.kan.json.YsonArray
 import dev.entao.kan.json.YsonObject
 import java.util.*
@@ -18,6 +15,7 @@ import kotlin.reflect.KProperty
  * Created by entaoyang@163.com on 2017-03-24.
  */
 
+@KeepNames
 class MapTable(val table: String) {
 
     init {
