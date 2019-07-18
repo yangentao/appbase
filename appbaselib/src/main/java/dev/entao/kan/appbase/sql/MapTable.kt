@@ -15,7 +15,7 @@ import kotlin.reflect.KProperty
  * Created by entaoyang@163.com on 2017-03-24.
  */
 
-@KeepNames
+@KeepMembers
 class MapTable(val table: String) {
 
     init {
@@ -57,7 +57,7 @@ class MapTable(val table: String) {
 
     fun toMap(map: MutableMap<String, String>) {
         val c = db.query("select $KEY, $VAL from $table", emptyList()) ?: return
-        c.listRow_.forEach {
+        c.listRowData.forEach {
             val k = it.str(KEY)!!
             val v = it.str(VAL) ?: ""
             map[k] = v
@@ -75,20 +75,20 @@ class MapTable(val table: String) {
 
     fun findKey(value: String): String? {
         val c = db.query("select key from $table where value = ? limit 1", listOf(value)) ?: return null
-        val m = c.listRow_.firstOrNull() ?: return null
+        val m = c.listRowData.firstOrNull() ?: return null
         return m.str(KEY)
     }
 
     fun has(key: String): Boolean {
         val c = db.query("select value from $table where key=? limit 1", listOf(key))
             ?: return false
-        return c.listRow_.isNotEmpty()
+        return c.listRowData.isNotEmpty()
     }
 
     operator fun get(key: String): String? {
         val c = db.query("select value from $table where key=? limit 1", listOf(key))
             ?: return null
-        val m = c.listRow_.firstOrNull() ?: return null
+        val m = c.listRowData.firstOrNull() ?: return null
         return m.str(VAL)
     }
 

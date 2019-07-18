@@ -3,8 +3,11 @@
 package dev.entao.kan.appbase.sql
 
 import android.database.Cursor
-import dev.entao.kan.base.createInstance
+import dev.entao.kan.base.*
 import dev.entao.kan.json.*
+import kotlin.reflect.KMutableProperty1
+import kotlin.reflect.full.createInstance
+import kotlin.reflect.full.memberProperties
 
 
 inline fun Cursor.eachRow(block: (Cursor) -> Unit) {
@@ -25,7 +28,7 @@ inline fun Cursor.firstRow(block: (Cursor) -> Unit) {
 
 
 //带下划线表示关闭Cursor
-val Cursor.listRow_: List<RowData>
+val Cursor.listRowData: List<RowData>
     get() {
         val ls = ArrayList<RowData>()
         this.use {
@@ -37,7 +40,7 @@ val Cursor.listRow_: List<RowData>
     }
 
 //带下划线表示关闭Cursor
-val Cursor.firstRow_: RowData?
+val Cursor.firstRowData: RowData?
     get() {
         var d: RowData? = null
         this.use {
@@ -55,30 +58,30 @@ val Cursor.currentRowData: RowData
 
 
 //带下划线表示关闭Cursor
-val Cursor.listObject_: List<YsonObject>
+val Cursor.listYsonObject: List<YsonObject>
     get() {
         val ls = ArrayList<YsonObject>()
         this.use {
             while (this.moveToNext()) {
-                ls += this.currentObject
+                ls += this.currentYsonObject
             }
         }
         return ls
     }
 
 //带下划线表示关闭Cursor
-val Cursor.firstObject_: YsonObject?
+val Cursor.firstYsonObject: YsonObject?
     get() {
         var d: YsonObject? = null
         this.use {
             if (this.moveToNext()) {
-                d = this.currentObject
+                d = this.currentYsonObject
             }
         }
         return d
     }
 
-val Cursor.currentObject: YsonObject
+val Cursor.currentYsonObject: YsonObject
     get() {
         val map = YsonObject(32)
         val c = this
@@ -101,19 +104,19 @@ val Cursor.currentObject: YsonObject
 
 
 //Person(val yo:YsonObject)
-inline fun <reified T : Any> Cursor.listModelsYO(): List<T> {
+inline fun <reified T : Any> Cursor.listYsonModels(): List<T> {
     val ls = ArrayList<T>(256)
     this.eachRow {
-        val yo = it.currentObject
+        val yo = it.currentYsonObject
         ls += T::class.createInstance(YsonObject::class, yo)
     }
     return ls
 }
 
 //Person(val yo:YsonObject)
-inline fun <reified T : Any> Cursor.firstModelsYO(): T? {
+inline fun <reified T : Any> Cursor.firstYsonModel(): T? {
     this.firstRow {
-        val yo = it.currentObject
+        val yo = it.currentYsonObject
         return T::class.createInstance(YsonObject::class, yo)
     }
     return null
@@ -132,3 +135,105 @@ fun Cursor.firstLong(index: Int = 0): Long? {
     }
     return null
 }
+
+fun Cursor.firstInt(index: Int = 0): Int? {
+    this.firstRow {
+        return it.getInt(index)
+    }
+    return null
+}
+
+
+fun <T : Any> Cursor.firstModel(block: () -> T): T? {
+    this.firstRow {
+        val m = block()
+        fillModel(m)
+        return m
+    }
+    return null
+}
+
+inline fun <reified T : Any> Cursor.firstModel(): T? {
+    this.firstRow {
+        val m = T::class.createInstance()
+        fillModel(m)
+        return m
+    }
+    return null
+}
+
+inline fun <reified T : Any> Cursor.listModels(): List<T> {
+    val ps = T::class.memberProperties.filter {
+        it is KMutableProperty1<*, *>
+                && !it.hasAnnotation<Exclude>()
+                && it.isPublic
+    }.map { it as KMutableProperty1<*, *> }
+    val ls = ArrayList<T>(256)
+    this.eachRow {
+        val m = T::class.createInstance()
+        fillModel(m, ps)
+        ls += m
+    }
+    return ls
+}
+
+inline fun <reified T : Any> Cursor.listModels(block: () -> T): List<T> {
+    val ps = T::class.memberProperties.filter {
+        it is KMutableProperty1<*, *>
+                && !it.hasAnnotation<Exclude>()
+                && it.isPublic
+    }.map { it as KMutableProperty1<*, *> }
+    val ls = ArrayList<T>(256)
+    this.eachRow {
+        val m = block()
+        fillModel(m, ps)
+        ls += m
+    }
+    return ls
+}
+
+
+fun Cursor.fillModel(model: Any, ps: List<KMutableProperty1<*, *>>) {
+    val c = this
+    val colCount = c.columnCount
+    for (i in 0 until colCount) {
+        val key = c.getColumnName(i)
+        val p = ps.firstOrNull {
+            it.nameProp == key
+        } ?: continue
+        val ptype = p.returnType
+        val v: Any? = when (c.getType(i)) {
+            Cursor.FIELD_TYPE_INTEGER -> {
+                if (ptype.isTypeLong) {
+                    c.getLong(i)
+                } else {
+                    c.getInt(i)
+                }
+            }
+            Cursor.FIELD_TYPE_FLOAT -> {
+                if (ptype.isTypeDouble) {
+                    c.getDouble(i)
+                } else {
+                    c.getFloat(i)
+                }
+            }
+            Cursor.FIELD_TYPE_STRING -> c.getString(i)
+            Cursor.FIELD_TYPE_BLOB -> c.getBlob(i)
+            else -> null
+        }
+        if (v != null || p.returnType.isMarkedNullable) {
+            p.setValue(model, v)
+        }
+    }
+}
+
+fun Cursor.fillModel(model: Any) {
+    val ps = model::class.memberProperties.filter {
+        it is KMutableProperty1<*, *>
+                && !it.hasAnnotation<Exclude>()
+                && it.isPublic
+    }.map { it as KMutableProperty1<*, *> }
+    this.fillModel(model, ps)
+}
+
+

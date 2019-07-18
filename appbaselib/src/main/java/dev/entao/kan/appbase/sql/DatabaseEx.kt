@@ -100,7 +100,7 @@ fun SQLiteDatabase.addColumn(table: String, columnDef: String) {
 fun SQLiteDatabase.indexsOf(table: String): HashSet<String> {
     val all = HashSet<String>()
     val c = this.query("SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='$table'") ?: return all
-    c.listRow_.forEach {
+    c.listRowData.forEach {
         val s = it.str("name")
         if (s != null) {
             all.add(s)
@@ -113,7 +113,7 @@ fun SQLiteDatabase.tableInfo(tableName: String): ArrayList<TableInfoItem> {
     val all = ArrayList<TableInfoItem>()
     val c = this.query("PRAGMA table_info('$tableName')", kotlin.collections.emptyList())
         ?: return all
-    val ls = c.listRow_
+    val ls = c.listRowData
     ls.forEach {
         val item = TableInfoItem()
         item.cid = it.int("cid") ?: 0
@@ -131,7 +131,7 @@ fun SQLiteDatabase.tableInfo(tableName: String): ArrayList<TableInfoItem> {
 fun SQLiteDatabase.tables(): HashSet<String> {
     val all = HashSet<String>()
     val c = this.query("SELECT name FROM sqlite_master WHERE type='table'") ?: return all
-    c.listRow_.forEach {
+    c.listRowData.forEach {
         all += it.str("name") ?: ""
     }
     return all
@@ -140,7 +140,7 @@ fun SQLiteDatabase.tables(): HashSet<String> {
 fun SQLiteDatabase.indexs(): ArrayList<Pair<String, String>> {
     val all = ArrayList<Pair<String, String>>()
     val c = this.query("SELECT name, tbl_name FROM sqlite_master WHERE type='index'") ?: return all
-    c.listRow_.forEach {
+    c.listRowData.forEach {
         val a = it.str("name")!!
         val b = it.str("tbl_name")!!
         all += a to b
@@ -152,7 +152,7 @@ fun SQLiteDatabase.indexs(): ArrayList<Pair<String, String>> {
 fun SQLiteDatabase.indexInfo(indexName: String): HashSet<String> {
     val all = HashSet<String>()
     val c = this.query("PRAGMA index_info('$indexName')") ?: return all
-    c.listRow_.forEach {
+    c.listRowData.forEach {
         all += it.str("name")!!
     }
     return all
@@ -161,7 +161,7 @@ fun SQLiteDatabase.indexInfo(indexName: String): HashSet<String> {
 fun SQLiteDatabase.dumpTable(tableName: String) {
     val c = this.query("SELECT * FROM $tableName") ?: return
     val sb = StringBuilder(200)
-    c.listRow_.forEach {
+    c.listRowData.forEach {
         sb.setLength(0)
         it.map.forEach { e ->
             sb.append(e.value?.toString() ?: "null").append(", ")

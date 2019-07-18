@@ -99,7 +99,7 @@ object Asset {
             inStream = streamBuffered(path)
             val opts = BitmapFactory.Options()
             opts.inScreenDensity = DisplayMetrics.DENSITY_HIGH
-            return Drawable.createFromResourceStream(App.resource, null, inStream, null, opts)
+            return Drawable.createFromResourceStream(App.resource, null, inStream, null)
         } catch (e: Exception) {
             e.printStackTrace()
             Log.e("ASSET", e.localizedMessage ?: "")
