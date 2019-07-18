@@ -3,6 +3,7 @@
 package dev.entao.kan.appbase.sql
 
 import android.database.Cursor
+import dev.entao.kan.base.createInstance
 import dev.entao.kan.json.*
 
 
@@ -53,9 +54,6 @@ val Cursor.currentRowData: RowData
     }
 
 
-
-
-
 //带下划线表示关闭Cursor
 val Cursor.listObject_: List<YsonObject>
     get() {
@@ -100,3 +98,37 @@ val Cursor.currentObject: YsonObject
         }
         return map
     }
+
+
+//Person(val yo:YsonObject)
+inline fun <reified T : Any> Cursor.listModelsYO(): List<T> {
+    val ls = ArrayList<T>(256)
+    this.eachRow {
+        val yo = it.currentObject
+        ls += T::class.createInstance(YsonObject::class, yo)
+    }
+    return ls
+}
+
+//Person(val yo:YsonObject)
+inline fun <reified T : Any> Cursor.firstModelsYO(): T? {
+    this.firstRow {
+        val yo = it.currentObject
+        return T::class.createInstance(YsonObject::class, yo)
+    }
+    return null
+}
+
+fun Cursor.firstString(index: Int = 0): String? {
+    this.firstRow {
+        return it.getString(index)
+    }
+    return null
+}
+
+fun Cursor.firstLong(index: Int = 0): Long? {
+    this.firstRow {
+        return it.getLong(index)
+    }
+    return null
+}
