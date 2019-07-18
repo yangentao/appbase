@@ -5,6 +5,7 @@ package dev.entao.kan.appbase.sql
 import android.database.Cursor
 import dev.entao.kan.base.*
 import dev.entao.kan.json.*
+import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.memberProperties
@@ -163,11 +164,7 @@ inline fun <reified T : Any> Cursor.firstModel(): T? {
 }
 
 inline fun <reified T : Any> Cursor.listModels(): List<T> {
-    val ps = T::class.memberProperties.filter {
-        it is KMutableProperty1<*, *>
-                && !it.hasAnnotation<Exclude>()
-                && it.isPublic
-    }.map { it as KMutableProperty1<*, *> }
+    val ps = T::class.propsOfModel
     val ls = ArrayList<T>(256)
     this.eachRow {
         val m = T::class.createInstance()
@@ -178,11 +175,7 @@ inline fun <reified T : Any> Cursor.listModels(): List<T> {
 }
 
 inline fun <reified T : Any> Cursor.listModels(block: () -> T): List<T> {
-    val ps = T::class.memberProperties.filter {
-        it is KMutableProperty1<*, *>
-                && !it.hasAnnotation<Exclude>()
-                && it.isPublic
-    }.map { it as KMutableProperty1<*, *> }
+    val ps = T::class.propsOfModel
     val ls = ArrayList<T>(256)
     this.eachRow {
         val m = block()
@@ -228,12 +221,16 @@ fun Cursor.fillModel(model: Any, ps: List<KMutableProperty1<*, *>>) {
 }
 
 fun Cursor.fillModel(model: Any) {
-    val ps = model::class.memberProperties.filter {
-        it is KMutableProperty1<*, *>
-                && !it.hasAnnotation<Exclude>()
-                && it.isPublic
-    }.map { it as KMutableProperty1<*, *> }
-    this.fillModel(model, ps)
+    this.fillModel(model, model::class.propsOfModel)
 }
+
+val KClass<*>.propsOfModel: List<KMutableProperty1<*, *>>
+    get() {
+        return this.memberProperties.filter {
+            it is KMutableProperty1<*, *>
+                    && !it.hasAnnotation<Exclude>()
+                    && it.isPublic
+        }.map { it as KMutableProperty1<*, *> }
+    }
 
 
