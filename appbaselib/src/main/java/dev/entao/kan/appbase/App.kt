@@ -395,7 +395,11 @@ object App {
             val cacheDir: File = App.inst.externalCacheDir!!
 
             fun cacheFile(fileName: String): File {
-                return ensureDir(cacheDir, fileName)
+                return File(cacheDir, fileName)
+            }
+
+            fun cacheDir(dirName: String): File {
+                return ensureDir(cacheDir, dirName)
             }
 
             fun dir(dirName: String): File {
