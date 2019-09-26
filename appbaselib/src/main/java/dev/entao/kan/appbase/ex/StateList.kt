@@ -71,3 +71,82 @@ object StateList {
         return this.colorDrawable(normal, VState.Pressed to light, VState.Selected to light, VState.Focused to light)
     }
 }
+
+
+fun StateList.color(normalColor: Int, block: StateMaker<Int>.() -> Unit): ColorStateList {
+    val m = StateMaker<Int>()
+    m.block()
+    return this.color(normalColor, *m.array)
+}
+
+fun StateList.drawable(normal: Drawable, block: StateMaker<Drawable>.() -> Unit): StateListDrawable {
+    val m = StateMaker<Drawable>()
+    m.block()
+    return this.drawable(normal, *m.array)
+}
+
+fun StateList.colorDrawable(normal: Int, block: StateMaker<Int>.() -> Unit): StateListDrawable {
+    val m = StateMaker<Int>()
+    m.block()
+    return this.colorDrawable(normal, *m.array)
+}
+
+
+class StateMaker<T> {
+    val ls: ArrayList<Pair<VState, T>> = ArrayList()
+
+    val array: Array<Pair<VState, T>>
+        get() {
+            return ls.toTypedArray()
+        }
+
+    fun selected(v: T): StateMaker<T> {
+        ls += VState.Selected to v
+        return this
+    }
+
+    fun unselected(v: T): StateMaker<T> {
+        ls += VState.Unselected to v
+        return this
+    }
+
+    fun pressed(v: T): StateMaker<T> {
+        ls += VState.Pressed to v
+        return this
+    }
+
+    fun unpressed(v: T): StateMaker<T> {
+        ls += VState.Unpressed to v
+        return this
+    }
+
+    fun enabled(v: T): StateMaker<T> {
+        ls += VState.Enabled to v
+        return this
+    }
+
+    fun disabled(v: T): StateMaker<T> {
+        ls += VState.Disabled to v
+        return this
+    }
+
+    fun checked(v: T): StateMaker<T> {
+        ls += VState.Checked to v
+        return this
+    }
+
+    fun unchecked(v: T): StateMaker<T> {
+        ls += VState.Unchecked to v
+        return this
+    }
+
+    fun focused(v: T): StateMaker<T> {
+        ls += VState.Focused to v
+        return this
+    }
+
+    fun unfocused(v: T): StateMaker<T> {
+        ls += VState.Unfocused to v
+        return this
+    }
+}

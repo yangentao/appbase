@@ -12,6 +12,10 @@ class ShapeRect() {
         value.shape = GradientDrawable.RECTANGLE
     }
 
+    constructor(fillColor: Int) : this() {
+        this.fill(fillColor)
+    }
+
     constructor(fillColor: Int, corner: Int) : this() {
         this.fill(fillColor)
         this.corner(corner)
@@ -91,6 +95,10 @@ class ShapeOval() {
 
     init {
         value.shape = GradientDrawable.OVAL
+    }
+
+    constructor(fillColor: Int) : this() {
+        fill(fillColor)
     }
 
     fun fill(color: Int): ShapeOval {

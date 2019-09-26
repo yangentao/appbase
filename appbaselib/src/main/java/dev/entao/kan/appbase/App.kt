@@ -32,7 +32,7 @@ import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.DrawableRes
-import dev.entao.kan.appbase.ex.color
+import dev.entao.kan.appbase.ex.argb
 import dev.entao.kan.http.Http
 import dev.entao.kan.log.Yog
 import java.io.File
@@ -47,7 +47,7 @@ import java.util.*
  */
 
 object App {
-    var themeColor = 0xFF34C4AA.color
+    var themeColor = 0xFF34C4AA.argb
 
     private var _inst: Application? = null
     val inst: Application
