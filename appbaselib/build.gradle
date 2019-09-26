@@ -12,7 +12,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 29
         versionCode 1
-        versionName "4.0.12"
+        versionName "4.1.0"
     }
 
 }
@@ -21,16 +21,14 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     testImplementation 'junit:junit:4.12'
     implementation 'androidx.annotation:annotation:1.1.0'
-    implementation 'androidx.core:core:1.0.2'
+    implementation 'androidx.core:core:1.1.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    implementation 'dev.entao.kan:base:4.0.6'
+    implementation 'dev.entao.kan:base:4.0.8'
     implementation 'dev.entao.kan:log:4.0.0'
     implementation 'dev.entao.kan:json:4.0.3'
-    implementation 'dev.entao.kan:http:4.0.2'
+    implementation 'dev.entao.kan:http:4.0.5'
 }
-
-
 
 
 task androidSourcesJar(type: Jar) {
@@ -49,7 +47,7 @@ uploadArchives {
                 authentication(userName: ARCHIVA_USERNAME, password: ARCHIVA_PASSWORD)
             }
             pom.artifactId = "appbase"
-            pom.groupId = project.group //'dev.entao'
+            pom.groupId = project.group
             pom.version = android.defaultConfig.versionName
             pom.packaging = 'aar'
 

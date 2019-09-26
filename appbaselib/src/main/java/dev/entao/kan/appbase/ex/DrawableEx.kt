@@ -1,18 +1,7 @@
 package dev.entao.kan.appbase.ex
 
-import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import androidx.core.graphics.drawable.DrawableCompat
-
-
-fun ColorDrawable(normal: Int, pressed: Int): Drawable {
-    return ColorStated(normal).pressed(pressed).selected(pressed).focused(pressed).value
-}
-
-fun ColorListLight(normal: Int, pressed: Int): ColorStateList {
-    return ColorList(normal).pressed(pressed).selected(pressed).focused(pressed).value
-}
-
 
 
 fun Drawable.limited(maxEdge: Int): Drawable {
@@ -20,16 +9,16 @@ fun Drawable.limited(maxEdge: Int): Drawable {
     val w = this.intrinsicWidth
     if (w > maxEdge || h > maxEdge) {
         if (w > h) {
-            this.setBounds(0, 0, dp(maxEdge), dp(h * maxEdge / w))
+            this.setBounds(0, 0, maxEdge.dp, (h * maxEdge / w).dp)
         } else {
-            this.setBounds(0, 0, dp(w * maxEdge / h), dp(maxEdge))
+            this.setBounds(0, 0, (w * maxEdge / h).dp, maxEdge.dp)
         }
     }
     return this
 }
 
 fun Drawable.sized(w: Int, h: Int = w): Drawable {
-    this.setBounds(0, 0, dp(w), dp(h))
+    this.setBounds(0, 0, w.dp, h.dp)
     return this
 }
 
@@ -46,6 +35,6 @@ fun Drawable.tinted(color: Int): Drawable {
 
 fun Drawable.tinted(color: Int, light: Int): Drawable {
     val dc = DrawableCompat.wrap(this.mutate())
-    DrawableCompat.setTintList(dc, ColorListLight(color, light))
+    DrawableCompat.setTintList(dc, StateList.lightColor(color, light))
     return dc
 }

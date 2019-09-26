@@ -104,7 +104,7 @@ object Bmp {
         val bmp = res(res)
         val d = bmp.tint(normalColor).drawable
         val d2 = bmp.tint(lightColor).drawable
-        return ImageStated(d).pressed(d2).selected(d2).focused(d2).value
+        return StateList.lightDrawable(d, d2)
     }
 
     @Throws(FileNotFoundException::class)

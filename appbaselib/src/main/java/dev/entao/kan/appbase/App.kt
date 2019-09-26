@@ -1,4 +1,10 @@
-@file:Suppress("DEPRECATION", "MemberVisibilityCanBePrivate", "unused", "ClassName", "ObjectPropertyName")
+@file:Suppress(
+    "DEPRECATION",
+    "MemberVisibilityCanBePrivate",
+    "unused",
+    "ClassName",
+    "ObjectPropertyName"
+)
 
 package dev.entao.kan.appbase
 
@@ -12,6 +18,7 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.database.sqlite.SQLiteDatabase
+import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
 import android.net.Uri
@@ -83,7 +90,10 @@ object App {
 
     val metaData: Bundle
         get() {
-            val ai = context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
+            val ai = context.packageManager.getApplicationInfo(
+                context.packageName,
+                PackageManager.GET_META_DATA
+            )
             return ai.metaData
         }
 
@@ -91,6 +101,11 @@ object App {
     val appInfo: ApplicationInfo get() = inst.applicationInfo
 
     val iconLauncher: Int get() = inst.applicationInfo.icon
+
+    val iconBitmap: Bitmap?
+        get() {
+            return getAppIcon(inst.packageManager, inst.packageName)
+        }
 
     val density: Float get() = inst.resources.displayMetrics.density
 
@@ -165,22 +180,26 @@ object App {
         }
 
     fun px2dp(px: Int): Int {
-        return (px / App.density + 0.5f).toInt()
+        return (px / density + 0.5f).toInt()
+    }
+
+    fun px2dpF(px: Float): Float {
+        return px / density
     }
 
     fun sp2px(spValue: Float): Int {
         return (spValue * scaledDensity + 0.5f).toInt()
     }
 
+    fun sp2pxF(spValue: Float): Float {
+        return spValue * scaledDensity
+    }
+
     /**
      * 根据手机的分辨率从 dp 的单位 转成为 px(像素)
      */
-    fun dp2px(dpValue: Float): Int {
-        return if (dpValue >= 0) {
-            (dpValue * density + 0.5f).toInt()
-        } else {
-            -((-dpValue * density + 0.5f).toInt())
-        }
+    fun dp2pxF(dpValue: Float): Float {
+        return dpValue * density
     }
 
     fun dp2px(dpValue: Int): Int {
@@ -199,7 +218,10 @@ object App {
     // 获取ApiKey
     fun getMetaValue(context: Context, metaKey: String): String? {
         try {
-            val ai = context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
+            val ai = context.packageManager.getApplicationInfo(
+                context.packageName,
+                PackageManager.GET_META_DATA
+            )
             return ai.metaData.getString(metaKey)
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
@@ -235,7 +257,13 @@ object App {
     }
 
 
-    fun installShortcut(name: String, imageRes: Int, cls: Class<*>, exKey: String, exValue: String) {
+    fun installShortcut(
+        name: String,
+        imageRes: Int,
+        cls: Class<*>,
+        exKey: String,
+        exValue: String
+    ) {
         val it = Intent(Intent.ACTION_MAIN)
         it.addCategory(Intent.CATEGORY_LAUNCHER)
         it.setClass(inst, cls)
@@ -473,6 +501,6 @@ object App {
             val movies: File get() = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES)
         }
     }
-
-
 }
+
+val Files: App.files get() = App.files
