@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package dev.entao.kan.appbase.ex
 
 import android.content.res.ColorStateList
@@ -73,19 +75,19 @@ object StateList {
 }
 
 
-fun StateList.color(normalColor: Int, block: StateMaker<Int>.() -> Unit): ColorStateList {
+fun StateList.colors(normalColor: Int, block: StateMaker<Int>.() -> Unit): ColorStateList {
     val m = StateMaker<Int>()
     m.block()
     return this.color(normalColor, *m.array)
 }
 
-fun StateList.drawable(normal: Drawable, block: StateMaker<Drawable>.() -> Unit): StateListDrawable {
+fun StateList.drawables(normal: Drawable, block: StateMaker<Drawable>.() -> Unit): StateListDrawable {
     val m = StateMaker<Drawable>()
     m.block()
     return this.drawable(normal, *m.array)
 }
 
-fun StateList.colorDrawable(normal: Int, block: StateMaker<Int>.() -> Unit): StateListDrawable {
+fun StateList.colorDrawables(normal: Int, block: StateMaker<Int>.() -> Unit): StateListDrawable {
     val m = StateMaker<Int>()
     m.block()
     return this.colorDrawable(normal, *m.array)
@@ -93,7 +95,7 @@ fun StateList.colorDrawable(normal: Int, block: StateMaker<Int>.() -> Unit): Sta
 
 
 class StateMaker<T> {
-    val ls: ArrayList<Pair<VState, T>> = ArrayList()
+    private val ls: ArrayList<Pair<VState, T>> = ArrayList()
 
     val array: Array<Pair<VState, T>>
         get() {
