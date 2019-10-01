@@ -11,8 +11,8 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 1
-        versionName "4.1.6"
+        versionCode 417
+        versionName "4.1.7"
     }
 
 }
@@ -27,7 +27,7 @@ dependencies {
     implementation 'dev.entao.kan:base:4.1.0'
     implementation 'dev.entao.kan:log:4.0.0'
     implementation 'dev.entao.kan:json:4.0.3'
-    implementation 'dev.entao.kan:http:4.0.5'
+    implementation 'dev.entao.kan:http:4.0.6'
 }
 
 

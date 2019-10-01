@@ -96,10 +96,6 @@ object Bmp {
     }
 
 
-    fun tintTheme(@DrawableRes res: Int): StateListDrawable {
-        return tintLight(res, Colors.Unselected, Colors.Theme)
-    }
-
     fun tintLight(@DrawableRes res: Int, normalColor: Int, lightColor: Int): StateListDrawable {
         val bmp = res(res)
         val d = bmp.tint(normalColor).drawable

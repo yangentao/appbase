@@ -1,5 +1,6 @@
 package dev.entao.kan.appbase.ex
 
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import androidx.core.graphics.drawable.DrawableCompat
 
@@ -44,7 +45,7 @@ fun Drawable.sized(w: Int, h: Int = w): Drawable {
 
 val Drawable.tintedWhite: Drawable
     get() {
-        return this.tinted(Colors.WHITE)
+        return this.tinted(Color.WHITE)
     }
 
 fun Drawable.tinted(color: Int): Drawable {
